@@ -1,21 +1,29 @@
-/*const mongoose = require("mongoose");
+const mongoose = require("mongoose");
+
+let isConnected = false; // cache connection
 
 const connectDB = async () => {
+  if (isConnected) {
+    console.log("MongoDB already connected");
+    return;
+  }
   try {
     await mongoose.connect(process.env.MONGO_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
+    isConnected = true;
     console.log("MongoDB connected successfully");
   } catch (error) {
     console.error("MongoDB connection failed:", error);
-    process.exit(1); // exit process if DB fails
+    throw error; // throw instead of exit
   }
 };
 
-module.exports = connectDB; */
+module.exports = connectDB;
 
-const mongoose = require("mongoose");
+
+/*const mongoose = require("mongoose");
 
 const connectDB = async () => {
   try {
@@ -27,5 +35,5 @@ const connectDB = async () => {
   }
 };
 
-module.exports = connectDB;
+module.exports = connectDB;*/
 
