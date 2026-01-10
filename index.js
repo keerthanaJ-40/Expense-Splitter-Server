@@ -14,6 +14,10 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/expense", expenseRoutes);
 
+app.get("/", (req, res) => {
+  res.send("Welcome to the Expense Tracker API");
+});
+
 connectDB();
 
 
