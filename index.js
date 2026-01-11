@@ -2,47 +2,40 @@ const express = require("express");
 const connectDB = require("./utils/database");
 const authRoutes = require("./api/router/authRoutes");
 const expenseRoutes = require("./api/router/expenseRoutes");
-const cors = require("cors");
 const serverless = require("serverless-http");
+const cors = require("micro-cors");
 require("dotenv").config();
 
 const app = express();
 
-const allowedOrigins = [
-  
-  "https://expensesplitterrs.netlify.app", // Netlify production
-  "http://localhost:3000",                // React dev
-];
-
-
- app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true,
-}));
-
-app.options(/.*/,cors());
-
+// JSON parser
 app.use(express.json());
 
+// Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/expense", expenseRoutes);
 
+// Test route
 app.get("/", (req, res) => {
-  res.send("Welcome to the Expense Tracker API");
+  res.send("Expense Tracker API running");
 });
 
+// DB connect
 connectDB();
-module.exports = app;
-module.exports.handler = serverless(app);
 
-   /*app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});*/
+// ✅ Allowed origins
+const allowedOrigins = [
+  "https://expensesplitterrs.netlify.app",
+  "http://localhost:3000",
+];
+
+// ✅ micro-cors (Vercel-friendly)
+const corsHandler = cors({
+  origin: allowedOrigins,
+  allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowHeaders: ["Content-Type", "Authorization"],
+  allowCredentials: true,
+});
+
+// ✅ ONLY export handler
+module.exports.handler = corsHandler(serverless(app));
