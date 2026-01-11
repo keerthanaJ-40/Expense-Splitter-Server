@@ -6,33 +6,41 @@ const jwt = require("jsonwebtoken");
 const signup = async (req, res) => {
   const { email, password, confirmPassword } = req.body;
 
+  if (!email || !password || !confirmPassword) {
+    return res.status(400).json({ message: "All fields required" });
+  }
+
 
   if (password !== confirmPassword)
     return res.status(400).json({ message: "Passwords do not match" });
 
   try {
-    let existingUser = await User.findOne({ email });
+    const existingUser = await User.findOne({ email });
     if (existingUser)
       return res.status(400).json({ message: "User already exists" });
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    existingUser = new User({
+    const user = new User({
       email,
       password: hashedPassword,
     });
-    await existingUser.save();
+    await user.save();
 
     res.status(201).json({ message: "Signup successful" });
   } catch (error) {
-  console.error("SIGNUP ERROR :", error);
-  res.status(500).json({ message: error.message });
+    console.error("SIGNUP ERROR :", error);
+    res.status(500).json({ message: error.message });
   }
 };
 
 // LOGIN
 const login = async (req, res) => {
   const { email, password } = req.body;
+  if (!email || !password) {
+    return res.status(400).json({ message: "Email & password required" });
+  }
+
 
   try {
     const user = await User.findOne({ email });
@@ -49,7 +57,7 @@ const login = async (req, res) => {
       { expiresIn: "1d" }
     );
 
-    res.status(200).json({message:"Login Successfull", token });
+    res.status(200).json({ message: "Login Successfull", token });
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }
