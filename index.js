@@ -3,19 +3,20 @@ const connectDB = require("./utils/database");
 const authRoutes = require("./api/router/authRoutes");
 const expenseRoutes = require("./api/router/expenseRoutes");
 const cors = require("cors");
+const serverless = require("serverless-http");
 require("dotenv").config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
 
 
+/*
 app.use(
   cors({
     origin: "https://expensesplitterrs.netlify.app",
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
-);
+); */
 
 app.use(express.json());
 

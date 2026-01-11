@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+/*const mongoose = require("mongoose");
 
 let isConnected = false; // cache connection
 
@@ -20,10 +20,10 @@ const connectDB = async () => {
   }
 };
 
-module.exports = connectDB;
+module.exports = connectDB; */
 
 
-/*const mongoose = require("mongoose");
+const mongoose = require("mongoose");
 
 const connectDB = async () => {
   try {
@@ -35,5 +35,5 @@ const connectDB = async () => {
   }
 };
 
-module.exports = connectDB;*/
+module.exports = connectDB;
 

@@ -12,7 +12,7 @@ module.exports = router;
 
 const express = require("express");
 const { addExpense, getExpense } = require("../controller/expenseController");
-const verifyToken = require("./middleware/authMiddleware");
+const verifyToken = require("../middleware/authMIddleware");
 
 const router = express.Router();
 
