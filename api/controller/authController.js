@@ -6,10 +6,6 @@ const jwt = require("jsonwebtoken");
 const signup = async (req, res) => {
   const { email, password, confirmPassword } = req.body;
 
-  if (!email || !password || !confirmPassword) {
-    return res.status(400).json({ message: "All fields required" });
-  }
-
 
   if (password !== confirmPassword)
     return res.status(400).json({ message: "Passwords do not match" });
@@ -29,8 +25,8 @@ const signup = async (req, res) => {
 
     res.status(201).json({ message: "Signup successful" });
   } catch (error) {
-    console.error("SIGNUP ERROR :", error);
-    res.status(500).json({ message: error.message });
+  console.error("SIGNUP ERROR :", error);
+  res.status(500).json({ message: error.message });
   }
 };
 
@@ -38,8 +34,8 @@ const signup = async (req, res) => {
 const login = async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
-    return res.status(400).json({ message: "Email & password required" });
-  }
+      return res.status(400).json({ message: "Email & password required" });
+    }
 
 
   try {
@@ -57,7 +53,7 @@ const login = async (req, res) => {
       { expiresIn: "1d" }
     );
 
-    res.status(200).json({ message: "Login Successfull", token });
+    res.status(200).json({message:"Login Successfull", token });
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }
