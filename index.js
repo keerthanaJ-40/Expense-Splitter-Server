@@ -8,29 +8,18 @@ require("dotenv").config();
 
 const app = express();
 
-const allowedOrigins = [
-  
-  "https://expensesplitterrs.netlify.app", // Netlify production
-  "http://localhost:3000",                // React dev
-];
-
-
- app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true,
-}));
-
-app.options(/.*/,cors());
+/* ✅ CORS with origin (THIS IS ENOUGH) */
+app.use(
+  cors({
+    origin: "https://expensesplitterrs.netlify.app",
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 
 app.use(express.json());
+
+connectDB();
 
 app.use("/api/auth", authRoutes);
 app.use("/api/expense", expenseRoutes);
@@ -39,10 +28,4 @@ app.get("/", (req, res) => {
   res.send("Welcome to the Expense Tracker API");
 });
 
-connectDB();
-module.exports = app;
-module.exports.handler = serverless(app);
-
-   /*app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});*/
+module.exports = serverless(app);

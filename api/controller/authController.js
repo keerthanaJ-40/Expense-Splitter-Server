@@ -6,25 +6,27 @@ const jwt = require("jsonwebtoken");
 const signup = async (req, res) => {
   const { email, password, confirmPassword } = req.body;
 
+
   if (password !== confirmPassword)
     return res.status(400).json({ message: "Passwords do not match" });
 
   try {
-    const existingUser = await User.findOne({ email });
+    let existingUser = await User.findOne({ email });
     if (existingUser)
       return res.status(400).json({ message: "User already exists" });
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = await User.create({
+    existingUser = new User({
       email,
       password: hashedPassword,
-      confirmPassword: hashedPassword,
     });
+    await existingUser.save();
 
     res.status(201).json({ message: "Signup successful" });
   } catch (error) {
-    res.status(500).json({ message: "Server error" });
+  console.error("SIGNUP ERROR :", error);
+  res.status(500).json({ message: error.message });
   }
 };
 
@@ -47,7 +49,7 @@ const login = async (req, res) => {
       { expiresIn: "1d" }
     );
 
-    res.status(200).json({ token });
+    res.status(200).json({message:"Login Successfull", token });
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }
