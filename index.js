@@ -2,7 +2,7 @@ const express = require("express");
 const connectDB = require("./utils/database");
 const authRoutes = require("./api/router/authRoutes");
 const expenseRoutes = require("./api/router/expenseRoutes");
-const cors = require("cors");
+const cors = require("micro-cors");
 const serverless = require("serverless-http");
 require("dotenv").config();
 
@@ -14,7 +14,7 @@ const allowedOrigins = [
 ];
 
 
- app.use(cors({
+ const corsMiddleware = cors({
   origin: (origin, callback) => {
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
@@ -25,9 +25,11 @@ const allowedOrigins = [
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
-}));
+});
 
-app.options(/.*/,cors());
+app.use(corsMiddleware);
+
+//app.options(/.*/,cors());
 
 app.use(express.json());
 
@@ -39,7 +41,7 @@ app.get("/", (req, res) => {
 });
 
 connectDB();
-module.exports = app;
+
 module.exports.handler = serverless(app);
 
    /*app.listen(PORT, () => {
