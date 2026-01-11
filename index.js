@@ -2,48 +2,40 @@ const express = require("express");
 const connectDB = require("./utils/database");
 const authRoutes = require("./api/router/authRoutes");
 const expenseRoutes = require("./api/router/expenseRoutes");
-const cors = require("micro-cors");
 const serverless = require("serverless-http");
+const cors = require("micro-cors");
 require("dotenv").config();
 
 const app = express();
 
-const allowedOrigins = [
-  "https://expensesplitterrs.netlify.app", // Netlify production
-  "http://localhost:3000",                // React dev
-];
-
-
- const corsMiddleware = cors({
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true,
-});
-
-app.use(corsMiddleware);
-
-//app.options(/.*/,cors());
-
+// JSON parser
 app.use(express.json());
 
+// Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/expense", expenseRoutes);
 
-app.get("/", (req, res) => {
-  res.send("Welcome to the Expense Tracker API");
+// Health check
+app.get("/", (req, res) => res.send("Welcome to Expense Tracker API"));
+
+// Connect DB
+connectDB().catch(err => {
+  console.error("MongoDB connection error:", err);
+  // don’t throw, just log to prevent immediate crash
 });
 
-connectDB();
+// Allowed origins
+const allowedOrigins = [
+  "https://expensesplitterrs.netlify.app",
+  "http://localhost:3000"
+];
 
-module.exports.handler = serverless(app);
+// Wrap handler with micro-cors
+const corsHandler = cors({
+  origin: allowedOrigins,
+  allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowHeaders: ["Content-Type", "Authorization"],
+  allowCredentials: true
+});
 
-   /*app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});*/
+module.exports.handler = corsHandler(serverless(app));
