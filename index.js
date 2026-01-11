@@ -8,15 +8,24 @@ require("dotenv").config();
 
 const app = express();
 
+const allowedOrigins = [
+  "https://expensesplitterrs.netlify.app", // Netlify production
+  "http://localhost:3000",                // React dev
+];
 
-app.use(
-  cors({
-    origin: "https://expensesplitterrs.netlify.app",
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders:["Content-Type","Authorization"],
-    credentials: true,
-  })
-); 
+
+ app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true,
+}));
 
 app.options(/.*/,cors());
 
