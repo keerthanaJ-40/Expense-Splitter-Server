@@ -8,6 +8,7 @@ require("dotenv").config();
 
 const app = express();
 
+
 /* ✅ CORS with origin (THIS IS ENOUGH) */
 app.use(
   cors({
