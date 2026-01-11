@@ -3,7 +3,6 @@ const connectDB = require("./utils/database");
 const authRoutes = require("./api/router/authRoutes");
 const expenseRoutes = require("./api/router/expenseRoutes");
 const cors = require("cors");
-const serverless = require("serverless-http");
 require("dotenv").config();
 
 const app = express();
@@ -29,4 +28,4 @@ app.get("/", (req, res) => {
   res.send("Welcome to the Expense Tracker API");
 });
 
-module.exports = serverless(app);
+
