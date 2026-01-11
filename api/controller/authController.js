@@ -17,11 +17,11 @@ const signup = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = new User({
+    existingUser = new User({
       email,
       password: hashedPassword,
     });
-    await user.save();
+    await existingUser.save();
 
     res.status(201).json({ message: "Signup successful" });
   } catch (error) {
@@ -33,10 +33,6 @@ const signup = async (req, res) => {
 // LOGIN
 const login = async (req, res) => {
   const { email, password } = req.body;
-  if (!email || !password) {
-      return res.status(400).json({ message: "Email & password required" });
-    }
-
 
   try {
     const user = await User.findOne({ email });
