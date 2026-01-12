@@ -3,24 +3,14 @@ const connectDB = require("./utils/database");
 const authRoutes = require("./api/router/authRoutes");
 const expenseRoutes = require("./api/router/expenseRoutes");
 const cors = require("cors");
-
 require("dotenv").config();
+const serverless = require("serverless-http");
 
 const app = express();
+const PORT = process.env.PORT || 5000;
 
-
-/* ✅ CORS with origin (THIS IS ENOUGH) */
-app.use(
-  cors({
-    origin: "https://expensesplitterrs.netlify.app",
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
-);
-
+app.use(cors());
 app.use(express.json());
-
-connectDB();
 
 app.use("/api/auth", authRoutes);
 app.use("/api/expense", expenseRoutes);
@@ -28,3 +18,7 @@ app.use("/api/expense", expenseRoutes);
 app.get("/", (req, res) => {
   res.send("Welcome to the Expense Tracker API");
 });
+
+connectDB();
+module.exports = app;
+module.exports.handler = serverless(app);
